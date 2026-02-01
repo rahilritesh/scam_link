@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Suhani 💖 Valentine</title>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  /* ❤️ BACKGROUND HEARTS */
+  .heart {
+    position: absolute;
+    font-size: 18px;
+    animation: floatUp 6s linear infinite;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  @keyframes floatUp {
+    from {
+      transform: translateY(100vh) scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-10vh) scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  .card {
+    background: white;
+    padding: 45px 50px;
+    border-radius: 22px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    width: 420px;
+    min-height: fit-content;
+    position: relative;
+    z-index: 2;
+  }
+
+  h1 { color: #e91e63; }
+
+  .question {
+    font-size: 18px;
+    margin: 20px 0;
+  }
+
+  .shayari {
+    display: none;
+    font-size: 15px;
+    color: #555;
+    margin-top: 15px;
+  }
+
+  button {
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  #yesBtn { background: #e91e63; color: white; }
+  #noBtn {
+    background: #ddd;
+    position: absolute;
+  }
+
+  .final {
+    display: none;
+    margin-top: 15px;
+    font-size: 17px;
+    color: #4caf50;
+  }
+
+  canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7c5c7a9f6b.mp3">
+</audio>
+
+<canvas id="fireworks"></canvas>
+
+<div class="card" id="card">
+  <h1>Suhani 💕</h1>
+
+  <!-- FIXED QUESTION -->
+  <div class="question">
+    Will you be my Valentine? 💖
+  </div>
+
+  <button id="yesBtn">Yes 💖</button>
+  <button id="noBtn">No 😏</button>
+
+  <!-- AFTER YES -->
+  <div class="shayari" id="shayari"></div>
+
+  <div class="final" id="finalMsg">
+    🎆 Suhani is officially taken by <b>Ritesh</b> 💍💖
+  </div>
+</div>
+
+<script>
+/* 🎵 MUSIC */
+document.body.addEventListener("click", () => {
+  document.getElementById("bgMusic").play();
+}, { once: true });
+
+/* 😈 NO BUTTON ESCAPE */
+const noBtn = document.getElementById("noBtn");
+noBtn.onmouseover = () => {
+  noBtn.style.left = Math.random() * 220 + "px";
+  noBtn.style.top = Math.random() * 150 + "px";
+};
+
+/* 💕 SHAYARI (ONLY AFTER YES) */
+const shayariLines = [
+  "Tum ‘Yes’ ho toh sab perfect hai 🫶",
+  "Dil already tumhare naam booked hai 💖",
+  "Suhani ka smile = my favorite notification 😌",
+  "No option bas drama ke liye tha 😎",
+  "Tum mili toh Valentine automatic ban gaya 💕"
+];
+
+/* ❤️ BACKGROUND HEART GENERATOR */
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerText = "💖";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = Math.random() * 10 + 14 + "px";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 6000);
+}, 300);
+
+/* 🎆 FIREWORKS */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+let particles = [];
+
+function textFireworks(text) {
+  ctx.font = "70px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let y = 0; y < img.height; y += 6) {
+    for (let x = 0; x < img.width; x += 6) {
+      if (img.data[(y * img.width + x) * 4 + 3] > 150) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 4,
+          vy: (Math.random() - 0.5) * 4,
+          life: 100
+        });
+      }
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach((p, i) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+    ctx.fillStyle = `hsl(${Math.random()*360},100%,60%)`;
+    ctx.fillRect(p.x, p.y, 3, 3);
+    if (p.life <= 0) particles.splice(i, 1);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* 💖 YES CLICK */
+document.getElementById("yesBtn").onclick = () => {
+  yesBtn.style.display = "none";
+  noBtn.style.display = "none";
+
+  const shayari =
+    shayariLines[Math.floor(Math.random() * shayariLines.length)];
+  shayariEl = document.getElementById("shayari");
+  shayariEl.innerText = shayari;
+  shayariEl.style.display = "block";
+
+  document.getElementById("finalMsg").style.display = "block";
+  textFireworks("Suhani ❤️ Ritesh");
+
+  html2canvas(card).then(c => {
+    const a = document.createElement("a");
+    a.href = c.toDataURL();
+    a.download = "Suhani_Ritesh_Valentine.png";
+    a.click();
+  });
+};
+</script>
+
+</body>
+</html>
